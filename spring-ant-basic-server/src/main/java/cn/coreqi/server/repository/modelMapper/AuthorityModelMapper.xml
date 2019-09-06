@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tiantianquan.springantbasicserver.repository.modelMapper.AuthorityModelMapper">
+    <select id="selectAll" resultType="cn.tiantianquan.springantbasicserver.model.PmAuthorityModel">
+        select pa.id,
+               create_time,
+               update_time,
+               row_version,
+               pa.name,
+               description,
+               summary,
+               order_code,
+               virtual_url,
+               parent_id,
+               type,
+               is_del,
+               full_path,
+               pat.name as type_str
+        from pm_authority pa
+                 left join param_authority_type pat on pa.type = pat.id
+    </select>
+</mapper>

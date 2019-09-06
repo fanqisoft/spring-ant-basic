@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tiantianquan.springantbasicserver.repository.modelMapper.UserModelMapper">
+    <resultMap id="BaseResultMap" type="cn.tiantianquan.springantbasicserver.model.PmUserModel">
+        <!--<result column="department_str" jdbcType="VARCHAR" property="departmentStr"/>-->
+    </resultMap>
+
+    <!--<sql id="Base_Column_List">-->
+    <!--pu.id,-->
+    <!--pu.create_time,-->
+    <!--pu.update_time,-->
+    <!--row_version,-->
+    <!--login_name,-->
+    <!--password,-->
+    <!--nick_name,-->
+    <!--main_department_id,-->
+    <!--sex_id,-->
+    <!--is_enabled,-->
+    <!--pd.name as department_str-->
+    <!--</sql>-->
+
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <!--<include refid="Base_Column_List"/>-->
+        pu.id,
+        pu.create_time,
+        pu.update_time,
+        row_version,
+        login_name,
+        password,
+        nick_name,
+        main_department_id,
+        sex_id,
+        is_enabled,
+        pd.name as department_str
+        from pm_user pu
+        left join pm_department pd on pu.main_department_id = pd.id
+        <where>
+            <if test="nickName != null">
+                and nick_name like concat('%',#{nickName},'%')
+            </if>
+            <if test="loginName != null">
+                and login_name like concat('%',#{loginName},'%')
+            </if>
+            <if test="departmentId != null">
+                and pd.id = #{departmentId}
+            </if>
+        </where>
+    </select>
+    <select id="selectById" resultMap="BaseResultMap">
+        select
+        <!--<include refid="Base_Column_List"/>-->
+        pu.id,
+        pu.create_time,
+        pu.update_time,
+        row_version,
+        login_name,
+        password,
+        nick_name,
+        main_department_id,
+        sex_id,
+        is_enabled,
+        pd.name as department_str
+        from pm_user pu
+        left join pm_department pd on pu.main_department_id = pd.id
+        where pu.id = #{id}
+    </select>
+    <select id="selectAuthorityByUserId" resultType="cn.tiantianquan.springantbasicserver.entity.PmAuthority">
+        select pa.*
+        from pm_authority pa
+                 inner join pm_role_and_authority praa on pa.id = praa.authority_id
+                 inner join pm_user_and_role puar on praa.role_id = puar.role_id
+                 inner join pm_user pu on pu.id = puar.user_id
+        where pu.id = #{userId} and pa.full_path != ''
+    </select>
+    <select id="selectRoleByUserId" resultType="cn.tiantianquan.springantbasicserver.entity.PmRole">
+        select pr.*
+        from pm_role pr
+                 inner join pm_user_and_role puar on puar.role_id = pr.id
+                 inner join pm_user pu on pu.id = puar.user_id
+        where pu.id = #{userId}
+    </select>
+</mapper>
